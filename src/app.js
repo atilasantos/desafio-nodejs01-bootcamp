@@ -11,10 +11,6 @@ app.use(cors());
 
 const repositories = [];
 
-function logRequests(request, response, next) {
-
-}
-
 function getIdIndex(id) {
     return repositories.findIndex(repo => repo.id == id);
 }
@@ -24,7 +20,7 @@ app.get("/repositories", (request, response) => {
 });
 
 app.post("/repositories", (request, response) => {
-    const { id, title, url, techs } = request.body;
+    const { title, url, techs } = request.body;
 
     const repositorie = {'id': uuid(),
                         'title': title,
@@ -41,12 +37,9 @@ app.post("/repositories", (request, response) => {
 app.put("/repositories/:id", (request, response) => {
     
     const { title, url, techs} = request.body;
-    const { id } = request.params;
-
-    console.log(id);
+    const { id } = request.params; //When we put an attribute on {} it means we are cathing its value only!
 
     const repoIndex = getIdIndex(id);
-    console.log(getIdIndex());
     if(repoIndex < 0) {
         return response.status(400).json({error: "Id not found!"});
     }
@@ -56,6 +49,7 @@ app.put("/repositories/:id", (request, response) => {
     repositories[repoIndex].techs = techs;
     repositories[repoIndex].likes = repositories[repoIndex].likes;
     
+    console.log(repositories[repoIndex]);
     return response.json(repositories[repoIndex]);
     
 });
@@ -72,6 +66,7 @@ app.delete("/repositories/:id", (request, response) => {
 
     const removedRepo = repositories.splice(repoIndex,1);
 
+    console.log(removedRepo.id + "removed!");
     return response.status(204).json(removedRepo);
 
 });
@@ -83,8 +78,7 @@ app.post("/repositories/:id/like", (request, response) => {
     if(repoIndex < 0){
         return response.status(400).json({error: 'Id not found!'});
     }
-    console.log(id);
-    console.log(repositories[repoIndex].likes);
+
     repositories[repoIndex].likes += 1;
     const formatLike = {
         "likes": repositories[repoIndex].likes
